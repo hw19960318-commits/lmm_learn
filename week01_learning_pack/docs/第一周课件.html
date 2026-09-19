@@ -1,0 +1,680 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>第1周 · PyTorch 与最小训练</title><style>
+:root{--bg:#f5f6f8;--paper:#fff;--ink:#172f42;--muted:#5f7280;--line:#dce5e9;--teal:#146b62;--nav:#122d40}*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:30px}body{margin:0;background:var(--bg);font:16px/1.85 -apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei","Noto Sans CJK SC",sans-serif;color:var(--ink)}a{color:var(--teal);text-decoration:none;overflow-wrap:anywhere}a:hover{text-decoration:underline}aside{position:fixed;inset:0 auto 0 0;width:265px;background:var(--nav);color:white;padding:29px 23px;overflow-y:auto}aside .brand{font-size:12px;letter-spacing:2px;color:#8fb7b6}aside h2{font-size:24px;line-height:1.45;margin:13px 0 24px}aside nav a{display:block;color:#d6e4ea;font-size:13px;padding:9px 0;border-top:1px solid #ffffff14;line-height:1.65}aside .progress{border-top:1px solid #ffffff30;margin-top:24px;padding-top:15px;font-size:13px}.progress label{display:block;padding:3px 0;cursor:pointer}.progress input{accent-color:#78c8b1;margin-right:9px}aside button{width:100%;margin-top:18px;border:1px solid #658490;border-radius:7px;padding:9px;background:transparent;color:#fff;cursor:pointer}main{margin-left:265px;max-width:1315px;padding:40px 54px 90px}.hero{background:var(--nav);color:white;padding:44px 46px;border-radius:16px;margin-bottom:28px}.eyebrow{font-size:12px;letter-spacing:2px;color:#90c9c4}.hero h1{font-size:36px;line-height:1.45;margin:16px 0 10px}.hero p{color:#c2d6df;max-width:750px;margin:0}.pills{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}.pills span{font-size:12px;background:#ffffff13;border:1px solid #ffffff24;border-radius:30px;padding:4px 13px}.content{background:var(--paper);padding:26px 44px 60px;border-radius:14px;box-shadow:0 8px 34px #16364d07}h2{font-size:25px;line-height:1.5;border-bottom:2px solid var(--line);padding-bottom:13px;margin:48px 0 22px}h3{font-size:19px;margin:27px 0 12px}p{margin:13px 0}strong{color:#133d4c}blockquote{margin:15px 0 25px;padding:12px 22px;border-left:4px solid var(--teal);background:#f0f8f6;font-size:14px;color:#385d68}blockquote p{margin:6px 0}table{width:100%;border-collapse:collapse;font-size:13px;margin:20px 0;table-layout:auto}td,th{border-bottom:1px solid var(--line);padding:11px 12px;text-align:left;vertical-align:top;overflow-wrap:anywhere}th{background:#eef4f6;color:#173e52;font-weight:600}tbody tr:nth-child(even){background:#fbfcfd}code{font:13px/1.8 "Cascadia Code",Consolas,"Noto Sans Mono CJK SC",monospace;background:#edf2f5;padding:2px 5px;border-radius:4px;color:#31516a;overflow-wrap:anywhere}pre{position:relative;background:#132c3d;border-radius:9px;padding:21px;overflow:auto;margin:19px 0}pre code{background:none;color:#e0edf3;font-size:12.5px;padding:0;white-space:pre;overflow-wrap:normal}pre button{position:absolute;right:8px;top:6px;background:#ffffff18;color:#c5d7e1;border:0;border-radius:4px;font-size:11px;padding:3px 8px;cursor:pointer}ul,ol{padding-left:23px}.qa{border:1px solid var(--line);border-radius:9px;margin:12px 0;background:#fbfcfd}.qa summary{cursor:pointer;padding:16px 18px;line-height:1.7;font-size:15px;font-weight:600;list-style:none}.qa summary:after{content:'＋';float:right;color:var(--teal)}.qa[open] summary:after{content:'－'}.qa summary span{display:block;font-size:11px;font-weight:500;color:var(--muted);margin-bottom:4px}.answer{padding:0 20px 15px;font-size:14px;border-top:1px dashed var(--line)}.footer{font-size:12px;color:var(--muted);margin-top:25px}.task-list-item{list-style:none}input[type=checkbox]{accent-color:var(--teal)}@media(max-width:950px){aside{position:relative;width:auto;padding:20px}aside nav{display:grid;grid-template-columns:1fr 1fr;gap:0 18px}aside h2{margin:8px 0}aside .progress,aside button{display:none}main{margin-left:0;padding:18px}.hero{padding:27px}.hero h1{font-size:29px}.content{padding:15px 21px 40px}table{font-size:12px;display:block;overflow-x:auto;max-width:100%}pre{max-width:100%}td,th{padding:8px}}@media print{aside,.pills,pre button{display:none!important}main{margin:0;max-width:none;padding:0}.hero{background:none;color:#172f42;padding:0 0 20px;border-bottom:2px solid #172f42}.hero p,.eyebrow{color:#555}.content{box-shadow:none;padding:0}.qa{break-inside:avoid}pre{background:#f3f4f6;white-space:pre-wrap;break-inside:avoid}pre code{color:#222;white-space:pre-wrap}h2{break-after:avoid;font-size:21px}h3{break-after:avoid}table{font-size:10px}body{background:white;font-size:12px}a{color:#222}}
+
+/* long-source-url-wrap */
+p,li,td,a{overflow-wrap:anywhere}main,article,section{min-width:0}
+</style></head><body><aside><div class="brand">LLM FROM THE INSIDE</div><h2>第一周<br>最小训练实验室</h2><nav><a href="#section-0">0. 先打开什么，最后得到什么</a><a href="#section-1">1. 学习资料：只读这一小组</a><a href="#section-2">2. 环境安装与第一次运行</a><a href="#section-3">3. 第1次课：让张量的每个轴都有含义</a><a href="#section-4">4. 第2次课：先手算，再验证自动求导</a><a href="#section-5">5. 第3次课：写出真正改变参数的训练循环</a><a href="#section-6">6. 第4次课：保存、加载、排错与周验收</a><a href="#section-7">7. 问题与参考解答</a><a href="#section-8">8. 参考运行结果与自己的实验记录</a><a href="#section-9">9. 资料来源与版本</a></nav><div class="progress"><div>我的四次课进度</div><label><input type="checkbox">第1次 · 张量</label><label><input type="checkbox">第2次 · 自动求导</label><label><input type="checkbox">第3次 · 训练循环</label><label><input type="checkbox">第4次 · 保存加载</label></div><button onclick="window.print()">打印讲义 / 保存本地副本</button></aside><main><header class="hero"><div class="eyebrow">WEEK 01 · PYTORCH FOUNDATIONS</div><h1>从一个张量开始，<br>让模型真正学起来。</h1><p>四次课只完成一件事：解释并实现前向、损失、反向、更新、保存与加载。每一次“学会”都留下测试和数值证据。</p><div class="pills"><span>4 次课</span><span>16 个代码 TODO</span><span>24 道自测题</span><span>24 项代码测试</span><span>CPU · 无模型下载</span></div></header><article class="content">
+<blockquote>
+<p><strong>本周目标：</strong> 独立写出、解释并测试一个可以训练、保存、重新加载的小模型。<br />
+<strong>安排：</strong> 4 次课，每次核心任务约 2 小时，另留 0—1 小时用于排错和选做。建议间隔学习，例如周一、周三、周五、周日；不绑定具体日期。<br />
+<strong>默认环境：</strong> 本机 CPU。无需下载大模型、数据集或接入收费 API。Python 已有基础即可，PyTorch 可从零开始。<br />
+<strong>材料说明：</strong> 本手册、课件、合成数据与练习代码是按既定第1周目标编写的自学材料；Raschka 与 PyTorch 官方资料是阅读来源，不是本包的作者。练习安排不是原版课程作业。链接核查日期：2026-09-18。</p>
+</blockquote>
+<h2 id="section-0">0. 先打开什么，最后得到什么</h2>
+<p>先看 <code>docs/第一周课件.html</code> 或 PowerPoint 课件，然后按本手册的四次课完成 <code>exercises/</code>。卡住时看提示，最后才对照 <code>reference/</code>。</p>
+<table>
+<thead>
+<tr>
+  <th>材料</th>
+  <th>位置</th>
+  <th>用法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>第一周课件</td>
+  <td><code>docs/第一周课件.html</code>、<code>docs/第一周课件.pptx</code></td>
+  <td>浏览器讲义适合自学；PPT 适合放映和做笔记。</td>
+</tr>
+<tr>
+  <td>完整学习手册</td>
+  <td>本文件</td>
+  <td>每次学什么、读哪里、写什么、如何验收。</td>
+</tr>
+<tr>
+  <td>待补全代码</td>
+  <td><code>exercises/</code></td>
+  <td>16 个编号 TODO，保留了函数签名和必要检查。</td>
+</tr>
+<tr>
+  <td>参考实现</td>
+  <td><code>reference/</code></td>
+  <td>同一套接口的完整答案，独立尝试后再打开。</td>
+</tr>
+<tr>
+  <td>24 项测试</td>
+  <td><code>tests/</code></td>
+  <td>通过 <code>--impl exercises</code> 检查自己的实现。</td>
+</tr>
+<tr>
+  <td>问题与解答</td>
+  <td>本手册第7节、<code>docs/问题与解答.md</code></td>
+  <td>先尝试口述，再核对答案；浏览器版可折叠答案。</td>
+</tr>
+<tr>
+  <td>实验与复盘</td>
+  <td><code>runs/</code>、<code>reports/week01_template.md</code></td>
+  <td>保存数字证据，不只写“已跑通”。</td>
+</tr>
+</tbody>
+</table>
+<p><strong>本周不做：</strong> BPE、Transformer、LoRA、CUDA 配置优化、图像数据集、完整断点续训。这些不是第一周的前置条件。</p>
+<p>本周的完整输入输出链：</p>
+<pre><code class="language-text">32条合成数值样本 X:[32,2]、y:[32,1]
+      ↓
+TinyRegressor：两个权重、一个偏置
+      ↓
+预测 pred:[32,1] → MSE标量
+      ↓
+backward：获得每个参数的梯度
+      ↓
+SGD.step：修改权重和偏置
+      ↓
+训练日志 → state_dict → 新模型加载 → 相同输入输出一致
+</code></pre>
+<p>标签由 <code>y = 2*x1 - 3*x2 + 0.5</code> 生成。<strong>这个公式只用于造数据；模型必须从随机参数开始学习，不能把正确系数写进 forward。</strong></p>
+<h2 id="section-1">1. 学习资料：只读这一小组</h2>
+<table>
+<thead>
+<tr>
+  <th>编号</th>
+  <th>教程入口</th>
+  <th>本周读什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>R1</td>
+  <td><a href="https://github.com/rasbt/LLMs-from-scratch/blob/main/appendix-A/01_main-chapter-code/code-part1.ipynb">Raschka：附录 A 主代码（A.1—A.8）</a></td>
+  <td>主要代码阅读材料；A.9 的 GPU 部分本周跳过。</td>
+</tr>
+<tr>
+  <td>R2</td>
+  <td><a href="https://pytorch.org/get-started/locally/">PyTorch：本地安装选择器</a></td>
+  <td>选择自己的操作系统与 CPU 计算平台。</td>
+</tr>
+<tr>
+  <td>R3</td>
+  <td><a href="https://docs.pytorch.org/tutorials/beginner/basics/tensorqs_tutorial.html">PyTorch：张量入门</a></td>
+  <td>张量属性、索引、算术、设备；不要求跟做 NumPy 共享内存部分。</td>
+</tr>
+<tr>
+  <td>R4</td>
+  <td><a href="https://docs.pytorch.org/tutorials/beginner/basics/autogradqs_tutorial.html">PyTorch：自动求导</a></td>
+  <td>requires_grad、计算图、backward、梯度与 no_grad。</td>
+</tr>
+<tr>
+  <td>R5</td>
+  <td><a href="https://docs.pytorch.org/tutorials/beginner/basics/optimization_tutorial.html">PyTorch：优化模型参数</a></td>
+  <td>训练循环、损失和优化器；本练习不下载页面示例的图像数据集。</td>
+</tr>
+<tr>
+  <td>R6</td>
+  <td><a href="https://docs.pytorch.org/tutorials/beginner/basics/saveloadrun_tutorial.html">PyTorch：保存和加载模型</a></td>
+  <td>保存 state_dict、重建模型、加载权重和 eval 模式；不运行其 VGG 下载示例。</td>
+</tr>
+<tr>
+  <td>R7</td>
+  <td><a href="https://docs.pytorch.org/tutorials/recipes/recipes/zeroing_out_gradients.html">PyTorch：梯度清零</a></td>
+  <td>解释梯度累积与 zero_grad。</td>
+</tr>
+<tr>
+  <td>R8</td>
+  <td><a href="https://docs.pytorch.org/tutorials/beginner/saving_loading_models.html">PyTorch：模型与检查点保存加载</a></td>
+  <td>选读：模型权重与完整训练检查点的区别。</td>
+</tr>
+<tr>
+  <td>R9</td>
+  <td><a href="https://karpathy.ai/zero-to-hero.html">Karpathy：Neural Networks: Zero to Hero</a></td>
+  <td>选看第一讲 micrograd 的计算图与反向传播部分；不增加为另一门必修课。</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Raschka 的阅读范围：</strong> 第1次 A.1—A.2；第2次 A.3—A.4；第3次 A.5 与 A.7，A.6 只了解 batch；第4次 A.8。A.9 的 GPU 与多卡代码跳过。<a href="https://github.com/rasbt/LLMs-from-scratch/blob/main/appendix-A/01_main-chapter-code/code-part1.ipynb">R1</a></p>
+<p>Raschka 的公开仓库包含代码和 Notebook，不代表整本书或所有付费视频都免费。本周用公开代码、本讲义与官方文档即可学习，不要求购书。官方示例可能使用图像分类；只阅读对应概念，不执行其下载数据/预训练权重的部分。</p>
+<h2 id="section-2">2. 环境安装与第一次运行</h2>
+<h3>2.1 创建独立环境</h3>
+<p>新建环境建议 Python 3.11 或 3.12；已有满足依赖的环境可以继续使用。代码实测环境见 <code>reports/verification.md</code>，它不是对所有系统组合的兼容保证。</p>
+<p>在解压得到的 <code>week01_learning_pack</code> 目录打开终端：</p>
+<pre><code class="language-bash">python -m venv .venv
+</code></pre>
+<p>Windows PowerShell：</p>
+<pre><code class="language-powershell">.\.venv\Scripts\Activate.ps1
+</code></pre>
+<p>macOS / Linux：</p>
+<pre><code class="language-bash">source .venv/bin/activate
+</code></pre>
+<p>若 PowerShell 的策略禁止运行激活脚本，无需修改系统安全策略。直接使用虚拟环境里的解释器，例如：</p>
+<pre><code class="language-powershell">.\.venv\Scripts\python.exe -m pip --version
+</code></pre>
+<p>之后把命令中的 <code>python</code> 同样替换为此路径即可。macOS/Linux 若没有 <code>python</code> 命令，可用 <code>python3</code> 创建环境。<a href="https://pytorch.org/get-started/locally/">R2</a></p>
+<h3>2.2 安装最少依赖</h3>
+<p>使用 <a href="https://pytorch.org/get-started/locally/">PyTorch 官方安装选择器</a>，选择自己的操作系统、Pip、Python 和 CPU。安装 <code>torch</code> 即可，本周不需要 <code>torchvision</code>、<code>torchaudio</code>、<code>transformers</code>、<code>trl</code>。</p>
+<p>Windows / Linux 的 CPU 安装示例：</p>
+<pre><code class="language-bash">python -m pip install --upgrade pip
+python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+python -m pip install -r requirements.txt
+</code></pre>
+<p>macOS 的起点：</p>
+<pre><code class="language-bash">python -m pip install --upgrade pip
+python -m pip install torch
+python -m pip install -r requirements.txt
+</code></pre>
+<p>如安装选择器给出的兼容要求不同，以你的系统对应选择结果为准；不必追求某个“最新版本”。<code>requirements.txt</code> 是依赖范围，不是跨系统锁文件。只为阅读官方 Notebook 可以使用网页预览，无需额外安装 Jupyter。</p>
+<h3>2.3 检查工具链</h3>
+<pre><code class="language-bash">python check_env.py
+python -m pytest -q --impl reference
+</code></pre>
+<p>第一次运行参考测试用于确认环境，<strong>不算完成你自己的作业</strong>。预期看到 CPU 自动求导通过，参考测试 24 项通过。若执行 <code>python -m pytest -q</code>，默认检查尚未补全的 <code>exercises/</code>，出现 <code>NotImplementedError</code> 是正常的作业状态，不是安装坏了。</p>
+<p>学习结束后记录依赖：</p>
+<pre><code class="language-bash">python -m pip freeze &gt; reports/requirements-local.txt
+</code></pre>
+<h2 id="section-3">3. 第1次课：让张量的每个轴都有含义</h2>
+<p><strong>要回答的问题：</strong> 输入数据如何变成模型能计算的形式？为什么形状错误有时不会报错？</p>
+<p><strong>阅读：</strong> Raschka A.1—A.2；PyTorch 张量教程的“张量属性”和“张量运算”。<a href="https://docs.pytorch.org/tutorials/beginner/basics/tensorqs_tutorial.html">R1</a></p>
+<h3>3.1 课堂安排</h3>
+<table>
+<thead>
+<tr>
+  <th>环节</th>
+  <th style="text-align:right">建议投入</th>
+  <th>本次具体动作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>资料与讲义</td>
+  <td style="text-align:right">25分钟</td>
+  <td>看本节与对应代码，认清 shape、dtype、device。</td>
+</tr>
+<tr>
+  <td>环境与试算</td>
+  <td style="text-align:right">25分钟</td>
+  <td>完成第2节安装检查；在终端打印标量、向量、矩阵。</td>
+</tr>
+<tr>
+  <td>自己写代码</td>
+  <td style="text-align:right">50分钟</td>
+  <td>补全 <code>tensor_ops.py</code> 的 TODO 1—4。</td>
+</tr>
+<tr>
+  <td>测试与记录</td>
+  <td style="text-align:right">20分钟</td>
+  <td>通过8项测试，记录一次形状错误和原因。</td>
+</tr>
+</tbody>
+</table>
+<h3>3.2 课件要点</h3>
+<p><strong>张量的四个最先检查项。</strong> <code>shape</code> 是每个轴的长度；<code>dtype</code> 是数值类型；<code>device</code> 是计算设备；<code>requires_grad</code> 决定相关运算是否需要追踪梯度。本周数值特征和回归目标使用 <code>float32</code>，设备固定 CPU。<a href="https://docs.pytorch.org/tutorials/beginner/basics/autogradqs_tutorial.html">R3</a></p>
+<p><strong>先写形状，再写运算。</strong> 本练习将 <code>X:[B,D]</code> 约定为 B 条样本、每条 D 个特征。手写仿射变换使用 <code>W:[D,K]</code>、<code>b:[K]</code>，输出 <code>[B,K]</code>。矩阵乘法 <code>@</code> 会沿匹配的特征维求和；<code>*</code> 是逐元素相乘，不能互换。</p>
+<pre><code class="language-python">X = torch.tensor([[1.0, 2.0], [3.0, 4.0]])  # [2,2]
+W = torch.tensor([[2.0], [-3.0]])             # [2,1]
+b = torch.tensor([0.5])                      # [1]
+pred = X @ W + b                            # [2,1]
+# 第一行：1*2 + 2*(-3) + 0.5 = -3.5
+# 第二行：3*2 + 4*(-3) + 0.5 = -5.5
+</code></pre>
+<p><strong>切片要考虑轴是否保留。</strong> 对 <code>[B,D]</code>，<code>X[:, -1]</code> 得到 <code>[B]</code>，<code>X[:, -1:]</code> 得到 <code>[B,1]</code>。预测 <code>[B,1]</code> 与标签 <code>[B]</code> 相减，可能被广播成 <code>[B,B]</code>。因此，本周先显式检查预测与目标形状完全相同。</p>
+<p><strong>MSE：把每条预测的误差汇总成标量。</strong> 本周每条样本只有一个输出，定义 <code>L = mean((pred-target)^2)</code>。它是当前回归任务的损失，不是后续语言模型默认使用的损失。</p>
+<h3>3.3 必做代码与命令</h3>
+<table>
+<thead>
+<tr>
+  <th>函数</th>
+  <th>输入</th>
+  <th>输出</th>
+  <th>不允许省略</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>create_demo_tensor</code></td>
+  <td>无</td>
+  <td><code>[3,4]</code>，0—11，float32</td>
+  <td>形状与 dtype。</td>
+</tr>
+<tr>
+  <td><code>last_column</code></td>
+  <td><code>[B,D]</code></td>
+  <td><code>[B,1]</code></td>
+  <td>保留列轴。</td>
+</tr>
+<tr>
+  <td><code>affine</code></td>
+  <td>X、W、b</td>
+  <td><code>X@W+b</code></td>
+  <td>自己写矩阵运算，不调用 nn.Linear。</td>
+</tr>
+<tr>
+  <td><code>mse</code></td>
+  <td>同形状预测与目标</td>
+  <td>标量 Tensor</td>
+  <td>不静默广播；不调用 MSELoss。</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-bash">python run_lesson.py --lesson 1 --impl exercises
+python -m pytest -q tests/test_01_tensors.py --impl exercises
+</code></pre>
+<p><strong>完成标志：</strong> 8 项测试通过；脱稿解释 <code>[32,1]-[32]</code> 为什么危险；留下 <code>lesson01.json</code>。</p>
+<p><strong>选做：</strong> 将两个输出的偏置分别设为 1 和 2，验证它们对每个样本都生效。不要扩展到多头注意力。</p>
+<h2 id="section-4">4. 第2次课：先手算，再验证自动求导</h2>
+<p><strong>要回答的问题：</strong> 一个损失数字如何变成每个参数的更新方向？</p>
+<p><strong>阅读：</strong> Raschka A.3—A.4；PyTorch 自动求导。链式法则仍不清楚时，选看 Karpathy 第一讲。<a href="https://docs.pytorch.org/tutorials/beginner/basics/autogradqs_tutorial.html">R1</a><a href="https://karpathy.ai/zero-to-hero.html">R9</a></p>
+<h3>4.1 课堂安排</h3>
+<table>
+<thead>
+<tr>
+  <th>环节</th>
+  <th style="text-align:right">建议投入</th>
+  <th>本次具体动作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>阅读与概念</td>
+  <td style="text-align:right">20分钟</td>
+  <td>画出 <code>w,x,b → pred → error → loss</code>。</td>
+</tr>
+<tr>
+  <td>纸面推导</td>
+  <td style="text-align:right">20分钟</td>
+  <td>独立算出下面例子的 loss、dw、db。</td>
+</tr>
+<tr>
+  <td>代码实验</td>
+  <td style="text-align:right">60分钟</td>
+  <td>补 TODO 5—7；反向前后分别打印参数和梯度。</td>
+</tr>
+<tr>
+  <td>测试与复述</td>
+  <td style="text-align:right">20分钟</td>
+  <td>通过5项测试；解释梯度累积的 2、4、2。</td>
+</tr>
+</tbody>
+</table>
+<h3>4.2 可手算的完整例子</h3>
+<p>设 <code>x=2</code>、<code>y=5</code>、<code>w=1</code>、<code>b=0</code>：</p>
+<pre><code class="language-text">pred = w*x+b = 2
+error = pred-y = -3
+L = error² = 9
+
+dL/dpred = 2*error = -6
+dpred/dw = x = 2      → dL/dw = -12
+dpred/db = 1          → dL/db = -6
+</code></pre>
+<p>如果用学习率 <code>0.1</code> 手动做一次普通梯度下降：</p>
+<pre><code class="language-text">w_new = 1 - 0.1*(-12) = 2.2
+b_new = 0 - 0.1*(-6)  = 0.6
+</code></pre>
+<p>这个特定单样本例子更新后预测为 5。<strong>这来自本例的数值选择，不表示任意模型更新一步都能拟合数据。</strong></p>
+<h3>4.3 必须分清的三件事</h3>
+<p><code>requires_grad=True</code> 让相关参数参与梯度计算；<code>loss.backward()</code> 把梯度累积到参数 <code>.grad</code>；只有后续显式优化步骤才更新参数。自动求导不是自动选择学习率，也不是自动完成训练。<a href="https://docs.pytorch.org/tutorials/beginner/basics/optimization_tutorial.html">R4</a></p>
+<p>每一步训练通常重新执行前向，得到新的计算图。梯度却会保留并累积，因此通常要清零。<code>accumulation_demo()</code> 的三次前向都是新图，预期梯度依次为 2、4、2；不能为解决这里的问题而滥加 <code>retain_graph=True</code>。<a href="https://docs.pytorch.org/tutorials/recipes/recipes/zeroing_out_gradients.html">R7</a></p>
+<p>对更新前参数做比较时，用 <code>p.detach().clone()</code> 保存独立快照。直接 <code>old=p</code> 会引用同一参数，无法真实记录“之前”。</p>
+<h3>4.4 必做代码与命令</h3>
+<pre><code class="language-bash">python run_lesson.py --lesson 2 --impl exercises
+python -m pytest -q tests/test_02_gradients.py --impl exercises
+</code></pre>
+<p><strong>完成标志：</strong> 手算与代码的梯度一致；反向之后 w 和 b 仍未更新；改变函数入参后仍算对，不能硬编码答案；留下 <code>lesson02.json</code>。</p>
+<p><strong>选做：</strong> 运行数值差分测试，理解它如何近似导数；不要本周自己实现完整 autograd 引擎。</p>
+<h2 id="section-5">5. 第3次课：写出真正改变参数的训练循环</h2>
+<p><strong>要回答的问题：</strong> 模型有没有真的学习，如何用数字证明？</p>
+<p><strong>阅读：</strong> Raschka A.5 与 A.7；A.6 只看 batch 概念；PyTorch 参数优化教程。<a href="https://docs.pytorch.org/tutorials/beginner/basics/optimization_tutorial.html">R1</a></p>
+<h3>5.1 课堂安排</h3>
+<table>
+<thead>
+<tr>
+  <th>环节</th>
+  <th style="text-align:right">建议投入</th>
+  <th>本次具体动作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>阅读训练循环</td>
+  <td style="text-align:right">20分钟</td>
+  <td>区分模型、损失、优化器与训练数据。</td>
+</tr>
+<tr>
+  <td>定义模型</td>
+  <td style="text-align:right">20分钟</td>
+  <td>补 TODO 8—9，打印输入、输出、参数名与参数量。</td>
+</tr>
+<tr>
+  <td>训练与对照</td>
+  <td style="text-align:right">50分钟</td>
+  <td>补 TODO 10—13，训练同一个32样本 batch，做 lr=0 对照。</td>
+</tr>
+<tr>
+  <td>测试与分析</td>
+  <td style="text-align:right">30分钟</td>
+  <td>通过7项测试，解释训练日志；有余力再试 lr=0.005。</td>
+</tr>
+</tbody>
+</table>
+<h3>5.2 本周模型与训练预算</h3>
+<table>
+<thead>
+<tr>
+  <th>配置</th>
+  <th>本练习设定</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>任务</td>
+  <td>两个数值特征的线性回归。</td>
+</tr>
+<tr>
+  <td>数据</td>
+  <td>32 条本地生成样本，<code>common.make_batch()</code>；固定重复使用同一个 batch。</td>
+</tr>
+<tr>
+  <td>模型</td>
+  <td><code>nn.Linear(2,1)</code>，包含两个权重和一个偏置。</td>
+</tr>
+<tr>
+  <td>损失</td>
+  <td>第1次课自己实现的 MSE。</td>
+</tr>
+<tr>
+  <td>优化器</td>
+  <td><code>torch.optim.SGD</code>，学习率 0.05，无动量、无权重衰减。</td>
+</tr>
+<tr>
+  <td>训练</td>
+  <td>200 次参数更新；不加载外部模型。</td>
+</tr>
+<tr>
+  <td>设备与精度</td>
+  <td>CPU、float32；线程数设为1，便于小实验复现。</td>
+</tr>
+<tr>
+  <td>随机设置</td>
+  <td>模型种子42，数据独立种子2026。</td>
+</tr>
+</tbody>
+</table>
+<p>这是一组用于教学的配置，不是对你的电脑耗时作出承诺，也不代表大型语言模型的训练配置。</p>
+<h3>5.3 代码结构</h3>
+<pre><code class="language-python">model.train()
+optimizer.zero_grad(set_to_none=True)
+pred = model(x)
+loss = mse(pred, y)
+loss.backward()
+optimizer.step()
+</code></pre>
+<p><code>nn.Module</code> 管理模型参数；<code>nn.Linear(2,1)</code> 接收最后一维为2的输入，输出一个数。它的权重存为 <code>[1,2]</code>，与第1次手写 <code>W:[2,1]</code> 相比，使用了转置的存放约定。<a href="https://github.com/rasbt/LLMs-from-scratch/blob/main/appendix-A/01_main-chapter-code/code-part1.ipynb">R1</a></p>
+<p>本练习的 <code>train_step()</code> 额外保存参数快照、检查 loss 和梯度是否有限，并记录梯度范数及参数变化。检查这些数值，是为了防止“loss 算出来了，但根本没有更新”的假训练。</p>
+<p><code>evaluate()</code> 使用 eval 模式和 no_grad，不调用更新。第一周这个函数计算的仍是同一 batch 上的拟合误差，<strong>函数名叫 evaluate 也不会自动让它变成独立测试集评价</strong>。</p>
+<h3>5.4 日志字段怎么读</h3>
+<table>
+<thead>
+<tr>
+  <th>字段</th>
+  <th>意思</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>step</code></td>
+  <td>已进行的第几次更新。</td>
+</tr>
+<tr>
+  <td><code>loss_before</code></td>
+  <td>当前步更新前、在固定 batch 上计算的 MSE。</td>
+</tr>
+<tr>
+  <td><code>loss_after</code></td>
+  <td>当前步更新后重新前向的 MSE。</td>
+</tr>
+<tr>
+  <td><code>grad_norm</code></td>
+  <td>当前步所有参数梯度的整体 L2 范数。</td>
+</tr>
+<tr>
+  <td><code>parameter_delta</code></td>
+  <td>本次更新前后参数差异的整体 L2 范数。</td>
+</tr>
+</tbody>
+</table>
+<p>早期应能观察到非零梯度和非零参数变化。不要强求每个参数在每一步都变化；接近数值精度极限时，极小更新可能被舍入。[本包实验]</p>
+<h3>5.5 必做代码与对照</h3>
+<pre><code class="language-bash">python run_lesson.py --lesson 3 --impl exercises
+python -m pytest -q tests/test_03_training.py --impl exercises
+python run_lesson.py --lesson 3 --impl exercises --lr 0 --run-name lr0
+</code></pre>
+<p>进阶对照仅改学习率，保持其他条件不变：</p>
+<pre><code class="language-bash">python run_lesson.py --lesson 3 --impl exercises --lr 0.005 --run-name lr0005
+</code></pre>
+<p>先写下预测，再运行：lr=0 时梯度会不会存在、参数会不会变、loss 会不会变？lr=0.005 在固定200步下是否拟合得同样充分？不能因为这一例子就得出某个学习率对所有任务更好。</p>
+<p><strong>完成标志：</strong> 7 项测试通过；初始与最终 loss 对比清楚；早期参数确实改变；学得的系数接近 <code>[2,-3]</code>、偏置接近0.5；有 <code>training.csv</code> 与 <code>training_summary.json</code>。</p>
+<p><strong>选做：</strong> 改成 <code>Linear(2,8) → Tanh → Linear(8,1)</code>，统计33个参数，再用同样数据检查训练。不要用这次可选变更替换基础模型并造成原有测试失败；另建实验文件。</p>
+<h2 id="section-6">6. 第4次课：保存、加载、排错与周验收</h2>
+<p><strong>要回答的问题：</strong> 重启程序后结果能否复现？怎样证明重新加载的是正确模型？</p>
+<p><strong>阅读：</strong> Raschka A.8；PyTorch 保存加载教程。只阅读相关 API，不执行示例中的大型模型下载。<a href="https://docs.pytorch.org/tutorials/beginner/basics/saveloadrun_tutorial.html">R1</a></p>
+<h3>6.1 课堂安排</h3>
+<table>
+<thead>
+<tr>
+  <th>环节</th>
+  <th style="text-align:right">建议投入</th>
+  <th>本次具体动作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>阅读</td>
+  <td style="text-align:right">20分钟</td>
+  <td>区分模型定义、参数字典和训练检查点。</td>
+</tr>
+<tr>
+  <td>补全保存加载</td>
+  <td style="text-align:right">30分钟</td>
+  <td>完成 TODO 14—16，重建同结构模型、加载权重。</td>
+</tr>
+<tr>
+  <td>一致性测试</td>
+  <td style="text-align:right">25分钟</td>
+  <td>同输入、同模式比较输出，通过4项测试。</td>
+</tr>
+<tr>
+  <td>排错练习</td>
+  <td style="text-align:right">20分钟</td>
+  <td>解释一种形状错误和一种反向/更新错误。</td>
+</tr>
+<tr>
+  <td>复盘与总验收</td>
+  <td style="text-align:right">25分钟</td>
+  <td>跑全套测试，填写报告，口述训练链。</td>
+</tr>
+</tbody>
+</table>
+<h3>6.2 保存加载的正确边界</h3>
+<p>保存：<code>torch.save(model.state_dict(), path)</code>。加载：先创建新的同结构模型，再用 <code>torch.load(path, map_location=&quot;cpu&quot;, weights_only=True)</code> 取得权重字典并严格加载。只加载自己生成或可信来源的文件。<a href="https://docs.pytorch.org/tutorials/beginner/basics/saveloadrun_tutorial.html">R6</a></p>
+<p><code>model.eval()</code> 与 <code>torch.no_grad()</code> 解决不同问题。前者改变某些层的模式，后者不记录用于反向的图。本周线性模型没有 Dropout/BatchNorm，因此 eval 不改变它的计算公式，但我们仍练习两者一起使用。<a href="https://docs.pytorch.org/tutorials/beginner/basics/saveloadrun_tutorial.html">R4</a></p>
+<p>这一课只保存模型权重，<strong>不等于完成恢复训练</strong>。优化器状态、调度器、随机状态和数据位置在第5周再统一处理。<a href="https://docs.pytorch.org/tutorials/beginner/saving_loading_models.html">R8</a></p>
+<h3>6.3 必做代码与命令</h3>
+<pre><code class="language-bash">python run_lesson.py --lesson 4 --impl exercises
+python -m pytest -q tests/test_04_checkpoint.py --impl exercises
+python -m pytest -q --impl exercises
+</code></pre>
+<p>第4课入口会重新执行同样的小规模训练，然后调用你写的保存与加载函数。无需手动依赖上一课运行产生的文件；输出仍放在对应 <code>runs/exercises/</code> 目录。</p>
+<p>同一组 probe 输入上比较保存前后预测，使用 <code>torch.testing.assert_close</code> 与合理容差，记录 <code>max_abs_diff</code>。参考运行的差异为0，但不把逐位相同作为不同平台的一般保证。</p>
+<h3>6.4 排错练习</h3>
+<table>
+<thead>
+<tr>
+  <th>现象</th>
+  <th>本周优先检查</th>
+  <th>修复要点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>No module named torch</code></td>
+  <td>终端与 IDE 的 Python 路径是否一致。</td>
+  <td>通过 <code>python -m pip</code> 安装；查看 check_env 的解释器路径。</td>
+</tr>
+<tr>
+  <td>模型有 loss，没有梯度</td>
+  <td>是否 detach、item、no_grad 或没有 requires_grad。</td>
+  <td>在计算 loss 前保持图连通，之后 backward。</td>
+</tr>
+<tr>
+  <td>有梯度，参数不变</td>
+  <td>是否漏了 step、lr=0、或已经到数值精度极限。</td>
+  <td>查看早期 grad_norm、parameter_delta 与学习率。</td>
+</tr>
+<tr>
+  <td>loss 很怪但没有形状报错</td>
+  <td>pred:[B,1] 与 y:[B] 是否静默广播。</td>
+  <td>保持同形状，检查单条样本配对。</td>
+</tr>
+<tr>
+  <td>累积梯度意外变大</td>
+  <td>是否每步忘记清零。</td>
+  <td>本周每步更新前清零；不要与计划中的梯度累积混淆。</td>
+</tr>
+<tr>
+  <td>第二次 backward 报图已释放</td>
+  <td>是否复用同一个 loss 张量。</td>
+  <td>每轮重新前向并计算新的 loss。</td>
+</tr>
+<tr>
+  <td>加载权重出现键名或大小不匹配</td>
+  <td>是否用了不同结构或错误文件。</td>
+  <td>重建相同模型，保留 strict=True 排查。</td>
+</tr>
+<tr>
+  <td>刚开始学生测试失败</td>
+  <td>是否还有 TODO 未实现。</td>
+  <td>先只跑本节测试；reference 与 exercises 不混淆。</td>
+</tr>
+</tbody>
+</table>
+<h3>6.5 本周验收清单</h3>
+<ul>
+<li class="task-list-item"><input class="task-list-item-checkbox" type="checkbox" disabled/>CPU 环境与自动求导检查通过，环境已记录。</li>
+<li class="task-list-item"><input class="task-list-item-checkbox" type="checkbox" disabled/>自己的实现通过全部24项测试，而不只是参考答案通过。</li>
+<li class="task-list-item"><input class="task-list-item-checkbox" type="checkbox" disabled/>能手算并复述标量例子的 loss=9、dw=-12、db=-6。</li>
+<li class="task-list-item"><input class="task-list-item-checkbox" type="checkbox" disabled/>能解释 zero_grad、backward、step 的区别。</li>
+<li class="task-list-item"><input class="task-list-item-checkbox" type="checkbox" disabled/>有同一 batch 的训练前后 loss、参数与真实更新证据。</li>
+<li class="task-list-item"><input class="task-list-item-checkbox" type="checkbox" disabled/>完成 lr=0 对照，理解有梯度不代表发生更新。</li>
+<li class="task-list-item"><input class="task-list-item-checkbox" type="checkbox" disabled/>保存再加载后输出通过容差一致性检查。</li>
+<li class="task-list-item"><input class="task-list-item-checkbox" type="checkbox" disabled/>完成 <code>reports/week01_template.md</code>，说明拟合实验不等于泛化评估。</li>
+</ul>
+<p><strong>通过后再进入第2周分词与数据。未通过的项目顺延，不需要额外买显卡。</strong></p>
+<h2 id="section-7">7. 问题与参考解答</h2><p>先尝试口述，再展开答案。每次课各6题。</p><details class="qa"><summary><span>Q01 · 第1次课</span>张量与 Python 列表有什么区别？</summary><div class="answer"><p>本周把张量理解为带形状、数据类型和设备信息的多维数值容器。列表是 Python 的通用容器；张量可以批量执行矩阵运算，符合求导条件时还能参与 autograd。不要只看打印出来的数字，应同时检查 shape、dtype、device。<a href="https://docs.pytorch.org/tutorials/beginner/basics/tensorqs_tutorial.html">R3</a></p>
+</div></details><details class="qa"><summary><span>Q02 · 第1次课</span>shape、ndim、numel 分别表示什么？</summary><div class="answer"><p>对形状 [3,4] 的张量，shape 是两个轴的长度，ndim=2 表示有两个轴，numel=12 表示元素总数。它们都不直接告诉你每个轴的业务含义；[B,D] 里的 B 和 D 是我们约定的样本数与特征数。</p>
+</div></details><details class="qa"><summary><span>Q03 · 第1次课</span>为什么 x[:, -1] 和 x[:, -1:] 不一样？</summary><div class="answer"><p>前者用整数索引最后一列，结果通常为 [B]；后者用范围切片，保留列轴，结果为 [B,1]。训练前应先确认目标形状，而不是等 loss 异常才检查。本练习要求预测与目标都为 [B,1]。<a href="https://docs.pytorch.org/tutorials/beginner/basics/tensorqs_tutorial.html">R3</a></p>
+</div></details><details class="qa"><summary><span>Q04 · 第1次课</span>X:[8,2]，W:[2,1]，b:[1]，X@W+b 是什么形状？</summary><div class="answer"><p>X@W 的内维 2 匹配，输出为 [8,1]；b 的单个值沿样本轴广播，结果仍为 [8,1]。矩阵乘法会对特征轴求和；逐元素乘法 * 不会做同样的求和。</p>
+</div></details><details class="qa"><summary><span>Q05 · 第1次课</span>预测 [32,1]、目标 [32]，为什么不能直接相减？</summary><div class="answer"><p>按广播规则，两者相减可以得到 [32,32]：原本想计算每条样本自己的误差，却变成两两比较。程序可能仍得到一个标量 loss，因此不报错不等于语义正确。本练习先检查两者形状完全一致，错误形状直接抛 ValueError。</p>
+</div></details><details class="qa"><summary><span>Q06 · 第1次课</span>CUDA available=False 是不是环境失败？</summary><div class="answer"><p>不是。本周训练固定使用 CPU。只要 torch 能导入、CPU 运算与梯度测试通过，就可以继续。CUDA 的可用性是额外设备信息，不是第一周的通关条件。<a href="https://pytorch.org/get-started/locally/">R2</a></p>
+</div></details><details class="qa"><summary><span>Q07 · 第2次课</span>requires_grad=True 和 .grad 各是什么？</summary><div class="answer"><p>requires_grad=True 让浮点参数参与可追踪的求导计算；对本练习的叶子参数调用反向传播后，.grad 用于保存累积的梯度。一般中间张量的 .grad 不会自动保留，不能看到 None 就认定整张图没有梯度。<a href="https://docs.pytorch.org/tutorials/beginner/basics/autogradqs_tutorial.html">R4</a></p>
+</div></details><details class="qa"><summary><span>Q08 · 第2次课</span>手算例子里 loss、dw、db 是多少？</summary><div class="answer"><p>x=2、y=5、w=1、b=0。预测 wx+b=2，误差 e=-3，平方损失 L=9。由链式法则，dL/dw=2e*x=-12，dL/db=2e=-6。代码必须用 autograd 得到这些值，不能把答案写死。</p>
+</div></details><details class="qa"><summary><span>Q09 · 第2次课</span>loss.backward() 会修改 w 和 b 吗？</summary><div class="answer"><p>在本练习中不会。它计算并累积参数梯度，w 仍为 1、b 仍为 0。随后 optimizer.step() 才根据梯度和学习率更新参数。我们分别用测试检查“梯度存在”和“参数变化”。<a href="https://docs.pytorch.org/tutorials/beginner/basics/optimization_tutorial.html">R4</a></p>
+</div></details><details class="qa"><summary><span>Q10 · 第2次课</span>为什么不清梯度会得到 2、4，而不是两次都是 2？</summary><div class="answer"><p>对 w=1，每次重新计算 w² 的梯度都是 2，但 backward 默认把新梯度加到已有 .grad。第一次为 2，第二次为 4；第三次先设 w.grad=None，再重新前向与反向，就回到 2。这里每次是新计算图，不需要 retain_graph=True。<a href="https://docs.pytorch.org/tutorials/recipes/recipes/zeroing_out_gradients.html">R7</a></p>
+</div></details><details class="qa"><summary><span>Q11 · 第2次课</span>为什么手动更新参数常放在 torch.no_grad() 中？</summary><div class="answer"><p>我们把参数更新视为优化动作，而不是下一步要继续求导的模型前向过程。no_grad 避免为这个动作建立普通反向图，也避免直接原地修改需梯度叶子参数的常见报错。调用标准 optimizer.step() 时通常不用再自己包一层。<a href="https://docs.pytorch.org/tutorials/beginner/basics/optimization_tutorial.html">R4</a></p>
+</div></details><details class="qa"><summary><span>Q12 · 第2次课</span>为什么记录 old=model.weight 不可靠？</summary><div class="answer"><p>这只是给同一个张量另起一个名字，后续原地更新也会反映在 old 上。要保存更新前的独立数值快照，使用 model.weight.detach().clone()。detach 断开求导关系，但单独 detach 仍可能共享存储；clone 才复制数值。</p>
+</div></details><details class="qa"><summary><span>Q13 · 第3次课</span>nn.Linear(2,1) 为什么只有 3 个参数？</summary><div class="answer"><p>一个输出对两个输入特征各有一个权重，再加一个偏置，所以 2×1+1=3。PyTorch 该层的 weight 形状为 [1,2]，计算相当于 X @ weight.T + bias；第1次课手写 affine 约定 W 为 [2,1]，只是存放方向不同。<a href="https://github.com/rasbt/LLMs-from-scratch/blob/main/appendix-A/01_main-chapter-code/code-part1.ipynb">R1</a></p>
+</div></details><details class="qa"><summary><span>Q14 · 第3次课</span>backward、step、zero_grad 的区别是什么？</summary><div class="answer"><p>backward 算梯度，step 用优化器更新参数，zero_grad 清掉旧梯度。常规单 batch 更新采用“清梯度→前向→loss→反向→更新”。梯度累积是有意延后清零和更新的另一种安排，本周先不混用。<a href="https://docs.pytorch.org/tutorials/recipes/recipes/zeroing_out_gradients.html">R5</a></p>
+</div></details><details class="qa"><summary><span>Q15 · 第3次课</span>learning rate=0 会出现什么？</summary><div class="answer"><p>梯度仍然可以被正常计算，但本练习使用无动量、无权重衰减的 SGD，更新量为 -lr*grad，因此参数不变；相同输入上的 loss 也不变。它是“反向不等于更新”的对照实验，不是新的学习方法。</p>
+</div></details><details class="qa"><summary><span>Q16 · 第3次课</span>为什么 loss 不一定每一步都下降？</summary><div class="answer"><p>不同 batch、随机层或过大的更新都可能让下一次损失更大；大多数训练没有逐步单调下降的保证。本练习是固定 batch、简单线性模型和小步长，先用这个受控环境检查实现。判断较复杂训练时，应结合固定评价条件和整体趋势。</p>
+</div></details><details class="qa"><summary><span>Q17 · 第3次课</span>同一个 batch 的 loss 很低，说明泛化好吗？</summary><div class="answer"><p>不能。这只说明该模型和训练过程能够拟合这些训练样本。第一周故意重复同一 batch，是为了排除数据管线变化、验证训练代码；要评价未见样本效果，后续需要独立数据和合适的评价设计。</p>
+</div></details><details class="qa"><summary><span>Q18 · 第3次课</span>训练后期梯度非零但 parameter_delta=0，一定是 bug 吗？</summary><div class="answer"><p>不一定。有限精度下，非常小的更新可能被舍入掉。本练习参考运行最后几步就可能出现这一现象。优先确认早期步骤有真实更新、loss 显著下降；不要要求所有参数、每个训练步骤都必须发生可见变化。</p>
+</div></details><details class="qa"><summary><span>Q19 · 第4次课</span>model.eval() 与 torch.no_grad() 有什么区别？</summary><div class="answer"><p>eval 切换模型模式，影响 Dropout、BatchNorm 等依赖训练模式的层；no_grad 控制是否建立用于反向的计算图。eval 不会自动关闭 autograd，no_grad 也不会自动把模型切到 eval。本周回归模型没有 Dropout/BatchNorm，两种模式的前向公式相同，但仍练习规范调用。<a href="https://docs.pytorch.org/tutorials/beginner/basics/saveloadrun_tutorial.html">R4</a></p>
+</div></details><details class="qa"><summary><span>Q20 · 第4次课</span>state_dict 保存了网络结构吗？</summary><div class="answer"><p>没有保存可直接替代模型类定义的完整结构。它主要保存参数和注册缓冲区。本周加载时先创建同样的 TinyRegressor，再严格加载 state_dict；如果结构或维度不同，不能假设权重可以直接装进去。<a href="https://docs.pytorch.org/tutorials/beginner/saving_loading_models.html">R6</a></p>
+</div></details><details class="qa"><summary><span>Q21 · 第4次课</span>为什么 torch.load 使用 weights_only=True 和 map_location=&quot;cpu&quot;？</summary><div class="answer"><p>weights_only=True 限制加载时可反序列化的对象种类，是本练习加载权重的明确设置；map_location=&quot;cpu&quot; 把张量映射到 CPU。它们不代表任意来源的文件都安全，只加载自己生成或可信来源的模型文件。<a href="https://docs.pytorch.org/tutorials/beginner/basics/saveloadrun_tutorial.html">R6</a></p>
+</div></details><details class="qa"><summary><span>Q22 · 第4次课</span>保存再加载后，如何验证没有出问题？</summary><div class="answer"><p>使用相同模型结构、同一输入、同样的 eval 模式，在 no_grad 下分别得到预测；用 torch.testing.assert_close 比较容差，并记录 max_abs_diff。再检查权重键名、设备和形状。不要只以“加载没有报错”作为依据。</p>
+</div></details><details class="qa"><summary><span>Q23 · 第4次课</span>只保存 state_dict 能从原状态继续训练吗？</summary><div class="answer"><p>可以恢复权重并重新开始训练，但一般不能保证恢复原训练轨迹。完整续训还要考虑优化器状态、步数、学习率调度、随机状态和数据读取位置。第一周只验收权重恢复与预测一致；完整检查点在第5周实现。<a href="https://docs.pytorch.org/tutorials/beginner/saving_loading_models.html">R8</a></p>
+</div></details><details class="qa"><summary><span>Q24 · 第4次课</span>这个回归模型与大模型有什么关系？</summary><div class="answer"><p>它不是语言模型，也没有注意力或分词器。本周复用的是训练的基本结构：输入张量→可训练模型→损失→反向→参数更新→保存加载。后续改变输入表示、网络结构和损失，但你仍要检查同样的梯度、参数、模式与恢复问题。</p>
+</div></details><h2 id="section-8">8. 参考运行结果与自己的实验记录</h2>
+<p>本包在 <strong>Python 3.13.5、PyTorch 2.10.0+cpu、Linux CPU</strong> 环境实测，参考实现 <strong>24项测试全部通过</strong>；未在你的电脑或 Windows/macOS 实机上验证。</p>
+<table>
+<thead>
+<tr>
+  <th>项目</th>
+  <th>本次实测结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>训练数据</td>
+  <td>32条合成样本，2个特征。</td>
+</tr>
+<tr>
+  <td>模型参数</td>
+  <td>3个，未使用GPU。</td>
+</tr>
+<tr>
+  <td>基准训练</td>
+  <td>200步，SGD学习率0.05。</td>
+</tr>
+<tr>
+  <td>初始MSE</td>
+  <td>14.609220。</td>
+</tr>
+<tr>
+  <td>最终MSE</td>
+  <td>3.51275e-12。</td>
+</tr>
+<tr>
+  <td>最终权重</td>
+  <td>[[2.0000016689300537, -2.9999985694885254]]。</td>
+</tr>
+<tr>
+  <td>最终偏置</td>
+  <td>[0.5000005960464478]。</td>
+</tr>
+<tr>
+  <td>lr=0 对照</td>
+  <td>参数不变，MSE不变。</td>
+</tr>
+<tr>
+  <td>lr=0.005 对照</td>
+  <td>同样200步后MSE约0.333037。</td>
+</tr>
+<tr>
+  <td>保存加载</td>
+  <td>probe输入上的最大输出绝对差异为0。</td>
+</tr>
+</tbody>
+</table>
+<p>这是当前合成线性任务和固定配置的结果，不是后续大模型训练的收敛、耗时或精度保证。所有验收阈值都是本练习的测试要求，而不是 Raschka 或 CS336 的原版作业标准。</p>
+<p>包内 <code>runs/reference/</code> 是本次制作时的实际运行记录，不是你本机跑出来的结果。自己的代码与日志在 <code>exercises/</code> 和 <code>runs/exercises/</code>；环境差异、版本差异和未完成项目都如实记录。</p>
+<h2 id="section-9">9. 资料来源与版本</h2>
+<p><strong><a href="https://github.com/rasbt/LLMs-from-scratch/blob/main/appendix-A/01_main-chapter-code/code-part1.ipynb">R1</a> Raschka：附录 A 主代码（A.1—A.8）</strong><br />
+https://github.com/rasbt/LLMs-from-scratch/blob/main/appendix-A/01_main-chapter-code/code-part1.ipynb<br />
+用途：主要代码阅读材料；A.9 的 GPU 部分本周跳过。</p>
+<p><strong><a href="https://pytorch.org/get-started/locally/">R2</a> PyTorch：本地安装选择器</strong><br />
+https://pytorch.org/get-started/locally/<br />
+用途：选择自己的操作系统与 CPU 计算平台。</p>
+<p><strong><a href="https://docs.pytorch.org/tutorials/beginner/basics/tensorqs_tutorial.html">R3</a> PyTorch：张量入门</strong><br />
+https://docs.pytorch.org/tutorials/beginner/basics/tensorqs_tutorial.html<br />
+用途：张量属性、索引、算术、设备；不要求跟做 NumPy 共享内存部分。</p>
+<p><strong><a href="https://docs.pytorch.org/tutorials/beginner/basics/autogradqs_tutorial.html">R4</a> PyTorch：自动求导</strong><br />
+https://docs.pytorch.org/tutorials/beginner/basics/autogradqs_tutorial.html<br />
+用途：requires_grad、计算图、backward、梯度与 no_grad。</p>
+<p><strong><a href="https://docs.pytorch.org/tutorials/beginner/basics/optimization_tutorial.html">R5</a> PyTorch：优化模型参数</strong><br />
+https://docs.pytorch.org/tutorials/beginner/basics/optimization_tutorial.html<br />
+用途：训练循环、损失和优化器；本练习不下载页面示例的图像数据集。</p>
+<p><strong><a href="https://docs.pytorch.org/tutorials/beginner/basics/saveloadrun_tutorial.html">R6</a> PyTorch：保存和加载模型</strong><br />
+https://docs.pytorch.org/tutorials/beginner/basics/saveloadrun_tutorial.html<br />
+用途：保存 state_dict、重建模型、加载权重和 eval 模式；不运行其 VGG 下载示例。</p>
+<p><strong><a href="https://docs.pytorch.org/tutorials/recipes/recipes/zeroing_out_gradients.html">R7</a> PyTorch：梯度清零</strong><br />
+https://docs.pytorch.org/tutorials/recipes/recipes/zeroing_out_gradients.html<br />
+用途：解释梯度累积与 zero_grad。</p>
+<p><strong><a href="https://docs.pytorch.org/tutorials/beginner/saving_loading_models.html">R8</a> PyTorch：模型与检查点保存加载</strong><br />
+https://docs.pytorch.org/tutorials/beginner/saving_loading_models.html<br />
+用途：选读：模型权重与完整训练检查点的区别。</p>
+<p><strong><a href="https://karpathy.ai/zero-to-hero.html">R9</a> Karpathy：Neural Networks: Zero to Hero</strong><br />
+https://karpathy.ai/zero-to-hero.html<br />
+用途：选看第一讲 micrograd 的计算图与反向传播部分；不增加为另一门必修课。</p>
+<p>官方文档和仓库会更新，本周不需要追随页面显示的每一个新特性。已有环境能通过测试后，先完成学习，不在课中途整体升级依赖。</p>
+</article><div class="footer">本讲义为定制学习材料，官方阅读来源见末尾。参考结果来自本包制作环境，不代表你的本机结果。</div></main><script>
+const key='llm_week01_progress_v1';document.querySelectorAll('.progress input').forEach((el,i)=>{try{el.checked=JSON.parse(localStorage.getItem(key)||'[]')[i]||false;}catch(e){}el.addEventListener('change',()=>{try{localStorage.setItem(key,JSON.stringify([...document.querySelectorAll('.progress input')].map(x=>x.checked)));}catch(e){}})});
+document.querySelectorAll('pre').forEach(pre=>{const b=document.createElement('button');b.textContent='复制';b.onclick=async()=>{try{await navigator.clipboard.writeText(pre.querySelector('code').innerText);b.textContent='已复制';setTimeout(()=>b.textContent='复制',1200)}catch(e){b.textContent='请选中复制'}};pre.append(b)});
+window.addEventListener('beforeprint',()=>document.querySelectorAll('details').forEach(x=>{x.dataset.wasOpen=x.open?'1':'0';x.open=true}));window.addEventListener('afterprint',()=>document.querySelectorAll('details').forEach(x=>{x.open=x.dataset.wasOpen==='1'}));
+</script></body></html>

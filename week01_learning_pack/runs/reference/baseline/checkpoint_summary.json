@@ -1,0 +1,6 @@
+{
+  "path": "/mnt/data/week01_learning_pack/runs/reference/baseline/tiny_regressor.pt",
+  "max_abs_diff": 0.0,
+  "loaded_training_mode": false,
+  "scope": "同输入、同模式下的输出一致性；未验证完整断点续训。"
+}

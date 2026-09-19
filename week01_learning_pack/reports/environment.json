@@ -1,0 +1,11 @@
+{
+  "python": "3.13.9",
+  "python_executable": "D:\\cursor\\lmm_learn\\week01_learning_pack\\.venv\\Scripts\\python.exe",
+  "os": "Windows-11-10.0.26200-SP0",
+  "pytorch": "2.14.0+cpu",
+  "default_device_for_this_week": "cpu",
+  "cuda_available": false,
+  "mps_available": false,
+  "cpu_threads": 1,
+  "cpu_autograd_check": "passed"
+}

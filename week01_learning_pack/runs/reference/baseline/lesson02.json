@@ -1,0 +1,15 @@
+{
+  "single_example": {
+    "prediction": 2.0,
+    "loss": 9.0,
+    "grad_w": -12.0,
+    "grad_b": -6.0,
+    "w_after_backward": 1.0,
+    "b_after_backward": 0.0
+  },
+  "accumulation": [
+    2.0,
+    4.0,
+    2.0
+  ]
+}

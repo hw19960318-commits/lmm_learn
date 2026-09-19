@@ -1,0 +1,30 @@
+{
+  "environment": {
+    "python": "3.13.5",
+    "python_executable": "/opt/pyvenv/bin/python",
+    "os": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "pytorch": "2.10.0+cpu",
+    "default_device_for_this_week": "cpu",
+    "cuda_available": false,
+    "mps_available": false,
+    "cpu_threads": 1
+  },
+  "seed": 42,
+  "data_seed": 2026,
+  "n_samples": 32,
+  "steps": 200,
+  "learning_rate": 0.05,
+  "initial_loss": 14.609219551086426,
+  "final_loss": 3.5127456499139953e-12,
+  "weight": [
+    [
+      2.0000016689300537,
+      -2.9999985694885254
+    ]
+  ],
+  "bias": [
+    0.5000005960464478
+  ],
+  "parameter_count": 3,
+  "interpretation": "同一 batch 的拟合实验，不是泛化评估。"
+}
